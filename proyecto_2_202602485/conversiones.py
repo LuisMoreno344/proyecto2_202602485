@@ -1,5 +1,16 @@
 SIMBOLOS_DIGITOS = "0123456789ABCDEF"
 
+BASES_NUMERICAS = {
+    "Binario": 2,
+    "Octal": 8,
+    "Decimal": 10,
+    "Hexadecimal": 16,
+}
+
+
+# ---------------------------------------------------------------
+# Desde decimal: divisiones sucesivas
+# ---------------------------------------------------------------
 
 def convertir_decimal_a_base(numero_decimal, base):
     """Convierte un entero decimal a la base indicada (2, 8 o 16)
@@ -56,32 +67,152 @@ def decimal_a_hexadecimal(numero_decimal):
     return convertir_decimal_a_base(numero_decimal, 16)
 
 
+# ---------------------------------------------------------------
+# Hacia decimal: notación posicional
+# ---------------------------------------------------------------
+
+def convertir_base_a_decimal(texto_numero, base):
+    """Convierte un número escrito en la base indicada (2, 8 o 16) a decimal
+    mediante notación posicional.
+
+    texto_numero debe ser una cadena ya validada para esa base.
+    Devuelve (valor_decimal, pasos), donde valor_decimal es un entero.
+    """
+    pasos = []
+    suma_aportes = 0
+    potencia_actual = 1  # base elevada a la posición actual
+    posicion = 0
+
+    # Se recorre de derecha a izquierda: la posición 0 es el último dígito
+    indice = len(texto_numero) - 1
+    while indice >= 0:
+        digito = texto_numero[indice].upper()
+        valor_digito = SIMBOLOS_DIGITOS.index(digito)
+        aporte = valor_digito * potencia_actual
+
+        pasos.append(f"{digito} (valor {valor_digito}) x {base}^{posicion} = {aporte}")
+
+        suma_aportes = suma_aportes + aporte
+        potencia_actual = potencia_actual * base
+        posicion = posicion + 1
+        indice = indice - 1
+
+    pasos.append(f"Suma de los aportes: {suma_aportes}")
+    return suma_aportes, pasos
+
+
+def binario_a_decimal(texto_binario):
+    """Binario a decimal: notación posicional con base 2."""
+    return convertir_base_a_decimal(texto_binario, 2)
+
+
+def octal_a_decimal(texto_octal):
+    """Octal a decimal: notación posicional con base 8."""
+    return convertir_base_a_decimal(texto_octal, 8)
+
+
+def hexadecimal_a_decimal(texto_hexadecimal):
+    """Hexadecimal a decimal: notación posicional con base 16."""
+    return convertir_base_a_decimal(texto_hexadecimal, 16)
+
+
+# ---------------------------------------------------------------
+# Conversión general entre cualquier par de bases distintas
+# ---------------------------------------------------------------
+
+def convertir_a_decimal(texto_numero, nombre_base_origen):
+    """Elige la función de conversión hacia decimal según la base de origen."""
+    if nombre_base_origen == "Binario":
+        return binario_a_decimal(texto_numero)
+    if nombre_base_origen == "Octal":
+        return octal_a_decimal(texto_numero)
+    return hexadecimal_a_decimal(texto_numero)
+
+
+def convertir_desde_decimal(numero_decimal, nombre_base_destino):
+    """Elige la función de conversión desde decimal según la base de destino."""
+    if nombre_base_destino == "Binario":
+        return decimal_a_binario(numero_decimal)
+    if nombre_base_destino == "Octal":
+        return decimal_a_octal(numero_decimal)
+    return decimal_a_hexadecimal(numero_decimal)
+
+
+def convertir_numero(texto_numero, nombre_base_origen, nombre_base_destino):
+    """Convierte un número entre dos bases distintas.
+
+    Si ninguna de las dos bases es decimal, se usa decimal como base intermedia.
+    texto_numero debe estar validado para la base de origen, y las bases
+    deben ser distintas.
+    Devuelve (resultado, pasos) con los encabezados ETAPA incluidos.
+    """
+    pasos = []
+    numero_etapa = 1
+
+    # Etapa hacia decimal (solo si el origen no es decimal)
+    if nombre_base_origen == "Decimal":
+        numero_decimal = int(texto_numero)  # permitido: entrada decimal ya validada
+    else:
+        numero_decimal, pasos_hacia_decimal = convertir_a_decimal(texto_numero, nombre_base_origen)
+        pasos.append(f"ETAPA {numero_etapa}: {nombre_base_origen.upper()} A DECIMAL")
+        pasos.extend(pasos_hacia_decimal)
+        numero_etapa = numero_etapa + 1
+
+    # Etapa desde decimal (solo si el destino no es decimal)
+    if nombre_base_destino == "Decimal":
+        resultado = str(numero_decimal)
+    else:
+        resultado, pasos_desde_decimal = convertir_desde_decimal(numero_decimal, nombre_base_destino)
+        if len(pasos) > 0:
+            pasos.append("")  # línea en blanco entre etapas
+        pasos.append(f"ETAPA {numero_etapa}: DECIMAL A {nombre_base_destino.upper()}")
+        pasos.extend(pasos_desde_decimal)
+
+    pasos.append("")
+    pasos.append(f"Resultado final en {nombre_base_destino}: {resultado}")
+    return resultado, pasos
+
+
 if __name__ == "__main__":
     # Pruebas rápidas: se ejecutan solo con "python conversiones.py"
-    # (decimal, binario, octal, hexadecimal) con resultados calculados a mano
+    # Cada caso tiene el mismo valor escrito en las cuatro bases (calculado a mano)
     casos = [
-        (0, "0", "0", "0"),
-        (1, "1", "1", "1"),
-        (10, "1010", "12", "A"),
-        (26, "11010", "32", "1A"),
-        (100, "1100100", "144", "64"),
-        (255, "11111111", "377", "FF"),
-        (4095, "111111111111", "7777", "FFF"),
+        {"Decimal": "0", "Binario": "0", "Octal": "0", "Hexadecimal": "0"},
+        {"Decimal": "1", "Binario": "1", "Octal": "1", "Hexadecimal": "1"},
+        {"Decimal": "10", "Binario": "1010", "Octal": "12", "Hexadecimal": "A"},
+        {"Decimal": "26", "Binario": "11010", "Octal": "32", "Hexadecimal": "1A"},
+        {"Decimal": "100", "Binario": "1100100", "Octal": "144", "Hexadecimal": "64"},
+        {"Decimal": "255", "Binario": "11111111", "Octal": "377", "Hexadecimal": "FF"},
+        {"Decimal": "4095", "Binario": "111111111111", "Octal": "7777", "Hexadecimal": "FFF"},
     ]
+    nombres_bases = ["Binario", "Octal", "Decimal", "Hexadecimal"]
 
-    for decimal, binario, octal, hexadecimal in casos:
-        assert decimal_a_binario(decimal)[0] == binario, f"Falló binario de {decimal}"
-        assert decimal_a_octal(decimal)[0] == octal, f"Falló octal de {decimal}"
-        assert decimal_a_hexadecimal(decimal)[0] == hexadecimal, f"Falló hexadecimal de {decimal}"
+    # Las doce conversiones (todos los pares de bases distintas) para cada caso
+    for caso in casos:
+        for origen in nombres_bases:
+            for destino in nombres_bases:
+                if origen != destino:
+                    resultado, _ = convertir_numero(caso[origen], origen, destino)
+                    assert resultado == caso[destino], (
+                        f"Falló {origen} a {destino} con {caso[origen]}: "
+                        f"obtuvo {resultado}, esperaba {caso[destino]}"
+                    )
 
-    # Número grande: 2 elevado a la 100
-    assert decimal_a_binario(2 ** 100)[0] == "1" + "0" * 100
-    assert decimal_a_octal(2 ** 100)[0] == "2" + "0" * 33
-    assert decimal_a_hexadecimal(2 ** 100)[0] == "1" + "0" * 25
+    # Hexadecimal en minúsculas
+    assert convertir_numero("ff", "Hexadecimal", "Binario")[0] == "11111111"
+
+    # Números grandes: 2 elevado a la 100
+    assert convertir_numero("1" + "0" * 100, "Binario", "Hexadecimal")[0] == "1" + "0" * 25
+
+    # Ida y vuelta con un número de 128 dígitos
+    numero_grande = "9" * 128
+    for destino in ["Binario", "Octal", "Hexadecimal"]:
+        convertido, _ = convertir_numero(numero_grande, "Decimal", destino)
+        de_vuelta, _ = convertir_numero(convertido, destino, "Decimal")
+        assert de_vuelta == numero_grande, f"Falló la ida y vuelta con {destino}"
 
     print("Todas las pruebas pasaron.\n")
 
-    resultado, pasos = decimal_a_binario(26)
-    print("Procedimiento de 26 a binario:")
+    resultado, pasos = convertir_numero("1A", "Hexadecimal", "Binario")
     for linea in pasos:
         print(linea)

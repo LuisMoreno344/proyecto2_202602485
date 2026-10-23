@@ -67,9 +67,6 @@ def decimal_a_hexadecimal(numero_decimal):
     return convertir_decimal_a_base(numero_decimal, 16)
 
 
-# ---------------------------------------------------------------
-# Hacia decimal: notación posicional
-# ---------------------------------------------------------------
 
 def convertir_base_a_decimal(texto_numero, base):
     """Convierte un número escrito en la base indicada (2, 8 o 16) a decimal
@@ -116,9 +113,7 @@ def hexadecimal_a_decimal(texto_hexadecimal):
     return convertir_base_a_decimal(texto_hexadecimal, 16)
 
 
-# ---------------------------------------------------------------
-# Conversión general entre cualquier par de bases distintas
-# ---------------------------------------------------------------
+
 
 def convertir_a_decimal(texto_numero, nombre_base_origen):
     """Elige la función de conversión hacia decimal según la base de origen."""
@@ -149,7 +144,7 @@ def convertir_numero(texto_numero, nombre_base_origen, nombre_base_destino):
     pasos = []
     numero_etapa = 1
 
-    # Etapa hacia decimal (solo si el origen no es decimal)
+   
     if nombre_base_origen == "Decimal":
         numero_decimal = int(texto_numero)  # permitido: entrada decimal ya validada
     else:
@@ -158,7 +153,7 @@ def convertir_numero(texto_numero, nombre_base_origen, nombre_base_destino):
         pasos.extend(pasos_hacia_decimal)
         numero_etapa = numero_etapa + 1
 
-    # Etapa desde decimal (solo si el destino no es decimal)
+    
     if nombre_base_destino == "Decimal":
         resultado = str(numero_decimal)
     else:
@@ -174,8 +169,7 @@ def convertir_numero(texto_numero, nombre_base_origen, nombre_base_destino):
 
 
 if __name__ == "__main__":
-    # Pruebas rápidas: se ejecutan solo con "python conversiones.py"
-    # Cada caso tiene el mismo valor escrito en las cuatro bases (calculado a mano)
+   
     casos = [
         {"Decimal": "0", "Binario": "0", "Octal": "0", "Hexadecimal": "0"},
         {"Decimal": "1", "Binario": "1", "Octal": "1", "Hexadecimal": "1"},
@@ -187,7 +181,7 @@ if __name__ == "__main__":
     ]
     nombres_bases = ["Binario", "Octal", "Decimal", "Hexadecimal"]
 
-    # Las doce conversiones (todos los pares de bases distintas) para cada caso
+  
     for caso in casos:
         for origen in nombres_bases:
             for destino in nombres_bases:
@@ -198,13 +192,13 @@ if __name__ == "__main__":
                         f"obtuvo {resultado}, esperaba {caso[destino]}"
                     )
 
-    # Hexadecimal en minúsculas
+    
     assert convertir_numero("ff", "Hexadecimal", "Binario")[0] == "11111111"
 
     # Números grandes: 2 elevado a la 100
     assert convertir_numero("1" + "0" * 100, "Binario", "Hexadecimal")[0] == "1" + "0" * 25
 
-    # Ida y vuelta con un número de 128 dígitos
+    
     numero_grande = "9" * 128
     for destino in ["Binario", "Octal", "Hexadecimal"]:
         convertido, _ = convertir_numero(numero_grande, "Decimal", destino)

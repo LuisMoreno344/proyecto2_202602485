@@ -85,7 +85,7 @@ def validar_bases_distintas(nombre_base_origen, nombre_base_destino):
 
 
 if __name__ == "__main__":
-    # Pruebas rápidas: se ejecutan solo con "python validaciones.py"
+    
     pruebas = [
         ("1010", "Binario"),
         ("0", "Binario"),

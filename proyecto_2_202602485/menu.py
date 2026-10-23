@@ -1,9 +1,22 @@
 from conversiones import BASES_NUMERICAS, convertir_numero
-from historial import agregar_registro
+from historial import (
+    agregar_registro,
+    eliminar_registro,
+    formatear_historial,
+    historial_esta_vacio,
+    vaciar_historial,
+)
+from practica import (
+    describir_ejercicio,
+    evaluar_respuesta,
+    formatear_puntuacion,
+    generar_ejercicio,
+    reiniciar_puntuacion,
+)
 from validaciones import LONGITUD_MAXIMA, validar_numero, validar_opcion_menu
 
 ANCHO_LINEA = 60
-NOMBRES_BASES = list(BASES_NUMERICAS)  
+NOMBRES_BASES = list(BASES_NUMERICAS)  # Binario, Octal, Decimal, Hexadecimal
 
 
 
@@ -26,7 +39,7 @@ def leer_opcion_menu(mensaje, opcion_minima, opcion_maxima):
         texto = input(mensaje)
         es_valida, mensaje_error = validar_opcion_menu(texto, opcion_minima, opcion_maxima)
         if es_valida:
-            return int(texto)  
+            return int(texto)  # permitido: opción de menú ya validada
         print(mensaje_error)
 
 
@@ -38,6 +51,7 @@ def mostrar_menu_principal():
     print("2. Consultar el historial")
     print("3. Iniciar el modo de práctica")
     print("4. Salir")
+
 
 
 
@@ -139,3 +153,116 @@ def realizar_conversion(historial):
     agregar_registro(historial, texto_numero, nombre_base_origen, nombre_base_destino, resultado)
     print("\nConversión agregada al historial.")
     pausar()
+
+
+
+
+def eliminar_registro_seleccionado(historial):
+    """Pide el número de un registro, lo valida y lo elimina."""
+    total_registros = len(historial)
+    numero_registro = leer_opcion_menu(
+        f"Número de registro a eliminar (1 a {total_registros}, 0 para cancelar): ",
+        0,
+        total_registros,
+    )
+    if numero_registro == 0:
+        print("\nNo se eliminó ningún registro.")
+        return
+
+    eliminar_registro(historial, numero_registro)
+    print(f"\nRegistro {numero_registro} eliminado.")
+
+
+def consultar_historial(historial):
+    """Muestra el historial y permite eliminar un registro, vaciarlo o volver."""
+    volver = False
+    while not volver:
+        imprimir_encabezado("HISTORIAL DE CONVERSIONES")
+
+        if historial_esta_vacio(historial):
+            print("\nEl historial está vacío.")
+            pausar()
+            return
+
+        print()
+        for linea in formatear_historial(historial):
+            print(linea)
+
+        print()
+        print("1. Eliminar un registro")
+        print("2. Vaciar historial")
+        print("3. Volver al menú principal")
+        opcion = leer_opcion_menu("Seleccione una opción: ", 1, 3)
+
+        if opcion == 1:
+            eliminar_registro_seleccionado(historial)
+        elif opcion == 2:
+            vaciar_historial(historial)
+            print("\nHistorial vaciado.")
+        else:
+            volver = True
+
+
+
+
+def resolver_ejercicio(puntuacion):
+    """Genera un ejercicio, pide la respuesta (hasta que tenga formato válido)
+    y actualiza la puntuación. Las entradas inválidas no cuentan."""
+    ejercicio = generar_ejercicio()
+
+    imprimir_encabezado("EJERCICIO DE PRÁCTICA")
+    print(describir_ejercicio(ejercicio))
+    print()
+    print("Ingrese únicamente el número de la respuesta.")
+    print("Escriba 'volver' para cancelar el ejercicio (no se cuenta).")
+
+    while True:
+        texto_respuesta = input("Su respuesta: ")
+
+        if texto_respuesta.strip().lower() == "volver":
+            return
+
+        fue_procesada, es_correcta, mensaje_error = evaluar_respuesta(
+            ejercicio, texto_respuesta, puntuacion
+        )
+        if fue_procesada:
+            break
+
+        print(mensaje_error)
+        print("Intente de nuevo.")
+
+    print()
+    if es_correcta:
+        print("¡Respuesta correcta!")
+    else:
+        print(f"Respuesta incorrecta. La respuesta esperada es: {ejercicio['respuesta_esperada']}")
+
+    print()
+    for linea in formatear_puntuacion(puntuacion):
+        print(linea)
+    pausar()
+
+
+def modo_practica(puntuacion):
+    """Menú del modo de práctica. La puntuación se conserva mientras el
+    programa esté abierto, hasta que el usuario la reinicie."""
+    volver = False
+    while not volver:
+        imprimir_encabezado("MODO DE PRÁCTICA")
+        print()
+        for linea in formatear_puntuacion(puntuacion):
+            print(linea)
+
+        print()
+        print("1. Resolver un nuevo ejercicio")
+        print("2. Reiniciar puntuación")
+        print("3. Volver al menú principal")
+        opcion = leer_opcion_menu("Seleccione una opción: ", 1, 3)
+
+        if opcion == 1:
+            resolver_ejercicio(puntuacion)
+        elif opcion == 2:
+            reiniciar_puntuacion(puntuacion)
+            print("\nPuntuación reiniciada.")
+        else:
+            volver = True

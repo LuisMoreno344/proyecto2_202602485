@@ -1,8 +1,16 @@
-from menu import leer_opcion_menu, mostrar_menu_principal, realizar_conversion
+from menu import (
+    consultar_historial,
+    leer_opcion_menu,
+    modo_practica,
+    mostrar_menu_principal,
+    realizar_conversion,
+)
+from practica import crear_puntuacion
 
 
 def main():
-    historial = []  
+    historial = []  # lista de registros; vive mientras el programa esté abierto
+    puntuacion = crear_puntuacion()  # se conserva hasta que el usuario la reinicie
     salir = False
 
     while not salir:
@@ -12,9 +20,9 @@ def main():
         if opcion == 1:
             realizar_conversion(historial)
         elif opcion == 2:
-            print("\nEl historial se agregará en la siguiente parte.")
+            consultar_historial(historial)
         elif opcion == 3:
-            print("\nEl modo de práctica se agregará en la siguiente parte.")
+            modo_practica(puntuacion)
         else:
             print("\nGracias por usar el conversor. ¡Hasta pronto!")
             salir = True

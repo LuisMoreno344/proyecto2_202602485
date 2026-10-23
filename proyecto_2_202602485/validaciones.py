@@ -35,7 +35,7 @@ def validar_opcion_menu(texto, opcion_minima, opcion_maxima):
     if not contiene_solo_digitos_decimales(texto):
         return False, "Error: la opción debe ser un número entero."
 
-    opcion = int(texto)  # permitido: opción de menú ya validada
+    opcion = int(texto)  
     if opcion < opcion_minima or opcion > opcion_maxima:
         return False, f"Error: la opción debe estar entre {opcion_minima} y {opcion_maxima}."
 
@@ -62,7 +62,7 @@ def validar_numero(texto, nombre_base):
     if "." in texto or "," in texto:
         return False, "Error: no se permiten números fraccionarios."
 
-    # Prefijos como 0b, 0o, 0x (en hexadecimal la 'b' es un dígito válido, no un prefijo)
+   
     if len(texto) > 1 and texto[0] == "0" and texto[1] in "boxBOX" and texto[1] not in digitos_validos:
         return False, "Error: no se permiten prefijos de base (0b, 0o, 0x)."
 

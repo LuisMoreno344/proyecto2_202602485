@@ -8,9 +8,6 @@ BASES_NUMERICAS = {
 }
 
 
-# ---------------------------------------------------------------
-# Desde decimal: divisiones sucesivas
-# ---------------------------------------------------------------
 
 def convertir_decimal_a_base(numero_decimal, base):
     """Convierte un entero decimal a la base indicada (2, 8 o 16)
@@ -19,9 +16,9 @@ def convertir_decimal_a_base(numero_decimal, base):
     numero_decimal debe ser un entero ya validado.
     """
     pasos = []
-    digitos_obtenidos = []  # residuos, en el orden en que se calculan
+    digitos_obtenidos = []  
 
-    # Caso especial: el cero no entra al ciclo de divisiones
+    
     if numero_decimal == 0:
         pasos.append(f"0 / {base}: cociente = 0, residuo = 0, dígito = 0")
         pasos.append("Leer los residuos del último al primero: 0")
@@ -41,7 +38,7 @@ def convertir_decimal_a_base(numero_decimal, base):
         digitos_obtenidos.append(digito)
         dividendo = cociente
 
-    # Leer los residuos del último al primero
+    
     resultado = ""
     posicion = len(digitos_obtenidos) - 1
     while posicion >= 0:
@@ -77,10 +74,10 @@ def convertir_base_a_decimal(texto_numero, base):
     """
     pasos = []
     suma_aportes = 0
-    potencia_actual = 1  # base elevada a la posición actual
+    potencia_actual = 1  
     posicion = 0
 
-    # Se recorre de derecha a izquierda: la posición 0 es el último dígito
+    
     indice = len(texto_numero) - 1
     while indice >= 0:
         digito = texto_numero[indice].upper()
@@ -146,7 +143,7 @@ def convertir_numero(texto_numero, nombre_base_origen, nombre_base_destino):
 
    
     if nombre_base_origen == "Decimal":
-        numero_decimal = int(texto_numero)  # permitido: entrada decimal ya validada
+        numero_decimal = int(texto_numero)  
     else:
         numero_decimal, pasos_hacia_decimal = convertir_a_decimal(texto_numero, nombre_base_origen)
         pasos.append(f"ETAPA {numero_etapa}: {nombre_base_origen.upper()} A DECIMAL")
@@ -159,7 +156,7 @@ def convertir_numero(texto_numero, nombre_base_origen, nombre_base_destino):
     else:
         resultado, pasos_desde_decimal = convertir_desde_decimal(numero_decimal, nombre_base_destino)
         if len(pasos) > 0:
-            pasos.append("")  # línea en blanco entre etapas
+            pasos.append("")  
         pasos.append(f"ETAPA {numero_etapa}: DECIMAL A {nombre_base_destino.upper()}")
         pasos.extend(pasos_desde_decimal)
 
@@ -195,7 +192,7 @@ if __name__ == "__main__":
     
     assert convertir_numero("ff", "Hexadecimal", "Binario")[0] == "11111111"
 
-    # Números grandes: 2 elevado a la 100
+   
     assert convertir_numero("1" + "0" * 100, "Binario", "Hexadecimal")[0] == "1" + "0" * 25
 
     

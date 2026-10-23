@@ -9,8 +9,8 @@ from practica import crear_puntuacion
 
 
 def main():
-    historial = []  # lista de registros; vive mientras el programa esté abierto
-    puntuacion = crear_puntuacion()  # se conserva hasta que el usuario la reinicie
+    historial = []  
+    puntuacion = crear_puntuacion() 
     salir = False
 
     while not salir:

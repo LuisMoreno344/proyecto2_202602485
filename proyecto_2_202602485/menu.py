@@ -16,7 +16,7 @@ from practica import (
 from validaciones import LONGITUD_MAXIMA, validar_numero, validar_opcion_menu
 
 ANCHO_LINEA = 60
-NOMBRES_BASES = list(BASES_NUMERICAS)  # Binario, Octal, Decimal, Hexadecimal
+NOMBRES_BASES = list(BASES_NUMERICAS)  
 
 
 
@@ -39,7 +39,7 @@ def leer_opcion_menu(mensaje, opcion_minima, opcion_maxima):
         texto = input(mensaje)
         es_valida, mensaje_error = validar_opcion_menu(texto, opcion_minima, opcion_maxima)
         if es_valida:
-            return int(texto)  # permitido: opción de menú ya validada
+            return int(texto)  
         print(mensaje_error)
 
 

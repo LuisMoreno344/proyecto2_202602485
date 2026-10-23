@@ -48,7 +48,7 @@ def formatear_historial(historial):
 
 
 if __name__ == "__main__":
-    # Pruebas rápidas: se ejecutan solo con "python historial.py"
+    
     historial = []
     assert historial_esta_vacio(historial)
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     for linea in formatear_historial(historial):
         print(linea)
 
-    # Eliminar el registro 2: el registro 3 pasa a ser el 2
+   
     eliminado = eliminar_registro(historial, 2)
     assert eliminado["entrada"] == "10"
     assert len(historial) == 2
